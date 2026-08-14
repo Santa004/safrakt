@@ -1,18 +1,22 @@
 # Tasks
 
 ## Current priority
-1. Scaffold Next.js-app (App Router, TS strict, Tailwind, pnpm)
-2. Supabase-grund + `.env.example`
-3. PWA-bas (“lägg till på hemskärmen”)
+1. Plan + scaffold (auth, layout, design tokens)
+2. Publika sidor: hem, tjänster, om, kontakt
+3. Mina djur (skapa / redigera / foto) — Autodock-mönster
+4. Bokning: se tider, boka, avboka, påminnelse
+5. Vaccinationer + påminnelser
+6. Erbjudanden/info i inloggat läge
+7. PWA + notis innan nästa tid
 
 ## Do not touch
-- `.env*` except `.env.example`
-- package manager / framework unless milestone requires it
-- journal-UI, kassa, e-recept, labb, Fortnox
-- unrelated files
+- Journalsystem / admin-journal
+- Kassa, e-recept, Fortnox
+- package.json unless needed
+- deployment config unless needed
 
 ## Done
-- Nollställt tidigare repo-innehåll (safrakt)
-- Bytt projektnamn till Mantorps smådjursklinik app
-- Låst AGENTS.md + stack (Next.js, Supabase, PWA, pnpm)
-- Produktgräns dokumenterad (kundapp + webb; inte journal)
+- Nollställt tidigare repo (safrakt) och bytt namn till Mantorps smådjursklinik app
+- Låst AGENTS.md (produktgräns + stack + workflow)
+- Låst PROJECT_CONTEXT.md (klinikfakta, brand, sidor)
+- Låst TASKS.md (roadmap 1–7)
