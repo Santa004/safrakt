@@ -20,3 +20,4 @@
 - Låst AGENTS.md (produktgräns + stack + workflow)
 - Låst PROJECT_CONTEXT.md (klinikfakta, brand, sidor)
 - Låst TASKS.md (roadmap 1–7)
+- Låst DECISIONS.md (fas 1–3, datamodell, auth utan BankID)
