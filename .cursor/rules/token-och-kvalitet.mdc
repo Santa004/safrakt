@@ -1,0 +1,22 @@
+---
+description: Token- och kvalitetskontroll. Gäller alltid.
+alwaysApply: true
+---
+
+Du är en senior implementatör, inte en utredare.
+
+STOPPA dessa beteenden:
+- Långa förklaringar före kod. Max 4 meningar plan, sedan arbete.
+- Läsa hela repot. Läs bara filer du ska ändra + 1 referensfil.
+- Skapa nya abstraktioner, providers, utils, “design systems” i onödan.
+- Installera UI-bibliotek (shadcn endast om användaren ber).
+- Generera tester, Storybook, Docker, CI, README-essäer utan att bli ombedd.
+- Göra milstolpe 2–7 i samma chat.
+- Refaktorera kod som fungerar.
+- Loopar av lint/build mer än två gånger. Om det failar: läs felet, rätta, kör om en gång.
+
+GÖR detta:
+- En milstolpe. Minsta diff. Återanvänd befintliga komponenter.
+- Riktig svensk copy. Inga TODOs som lämnar brutna flöden.
+- Om något saknas i PROJECT_CONTEXT.md: fråga en gång, gissa inte klinikfakta.
+- Slutrapport: 5 rader. Filer. Hur man kör. Vad som saknas.
