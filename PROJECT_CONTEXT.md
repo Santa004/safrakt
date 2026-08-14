@@ -5,7 +5,7 @@ Name: Mantorps smådjursklinik
 Industry: Smådjursklinik / veterinärvård
 Location: Mantorp, Sverige
 Current website:
-New website goal: Bygga en premium app/webbplats för kliniken från noll efter att tidigare repo nollställts.
+New website goal: Premium kundapp + publik webb (mobil-first, PWA). Inte journalsystem i denna fas.
 
 ## Offer
 What the website must sell: Förtroende, tillgänglighet och klinikens tjänster för husdjursägare
@@ -16,20 +16,21 @@ Secondary CTA: Se tjänster / öppettider
 Tone: Trygg, professionell, varm och lokal
 Colors: Att definieras
 Design references: Att definieras
-Avoid: Generisk AI-look, överfylld hero, lila gradient-teman
+Avoid: Generisk AI-look, kedje-app-känsla, överfylld hero, lila gradient-teman
 
 ## Important pages
-- Home
-- Services
-- About
-- Contact
-- Pricing/Offer
-- Case/Projects
-- CMS/Admin if relevant
+- Home (publik webb)
+- Tjänster
+- Om kliniken
+- Kontakt / öppettider
+- Kundapp (inloggad yta) — scope att preciseras per milstolpe
+- Inte i denna fas: journal-UI, kassa, e-recept, labb, Fortnox
 
 ## Technical stack
-Framework: Att väljas
+Framework: Next.js App Router + TypeScript strict + Tailwind CSS
 Hosting: Att väljas
-CMS: Att väljas
-Forms: Att väljas
+Backend: Supabase (Auth + Postgres + RLS)
+Forms: Zod vid API/formulärgränser
+PWA: Ja (lägg till på hemskärmen)
+Package manager: pnpm
 Analytics: Att väljas

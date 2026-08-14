@@ -1,31 +1,47 @@
 # Project Instructions
 
 ## Main goal
-This project is a premium Swedish business website. Prioritize high-converting design, mobile-first layout, fast performance, clean code, and safe incremental changes.
+Premium svensk kundapp + webb för Mantorps Smådjursklinik. Hög konvertering, mobil-first, snabbt, tryggt. Känsla värd 30–150 000 SEK. Inte en kedje-app, inte en leksak.
 
-## Workflow
-- Always inspect relevant files before editing.
-- Never rewrite the whole project unless explicitly asked.
-- Prefer small, focused changes.
-- Before editing, provide a short plan.
-- After editing, summarize changed files and why.
-- Do not touch unrelated files.
-- Do not change package manager, framework, deployment config, routing, CMS schema, or environment variables unless the task specifically requires it.
+## Product boundary
+THIS PHASE = kundapp + publik webb.
+NOT THIS PHASE = journalsystem, kassa, e-recept, labb, Fortnox, direktreglering, admin för veterinärjournal.
+
+Datamodellen ska kunna växa till journal senare. Bygg inte journal-UI.
+
+## Stack (do not change unless asked)
+- Next.js App Router + TypeScript strict + Tailwind CSS
+- Supabase (Auth + Postgres + RLS)
+- Svenska i all UI-copy
+- PWA (ska kunna “lägg till på hemskärmen”)
+- Package manager: pnpm
+
+## Workflow (saves usage)
+- Inspect relevant files before editing. Never rewrite the project.
+- One milestone per chat. Smallest complete change.
+- Do not create extra docs, README novels, or unused components.
+- Do not install packages unless required for the current milestone.
+- Do not run `pnpm install` more than once per chat unless lockfile changed.
+- Do not explore unrelated folders. Max 8 files read before you start editing, unless blocked.
+- If blocked: stop and ask. Do not guess clinic facts.
+- Prefer editing existing patterns over new abstractions.
+- No comments that narrate the code. No placeholder lorem.
+- Do not commit secrets. Never put service-role keys in client code.
 
 ## Code style
-- Keep components readable and modular.
-- Reuse existing design patterns/components before creating new ones.
-- Preserve existing visual identity unless instructed otherwise.
-- Use TypeScript-safe code if the project uses TypeScript.
-- Avoid fake placeholder content unless explicitly requested.
+- Server Components by default. Client only for interactivity.
+- Zod at API/form boundaries.
+- RLS on every table. Auth required for owner data.
+- Reuse UI primitives in `components/ui` before creating new ones.
+- Accessible: labels, focus, tap targets ≥ 44px, contrast.
 
-## Testing
-- Run or suggest the smallest relevant check first.
-- Prefer:
- - npm run build
- - npm run lint
- - npm run typecheck
-- If a command fails, analyze the exact error before changing code again.
+## Definition of done (each milestone)
+- Builds (`pnpm build`) and types (`pnpm typecheck`)
+- Mobile 390px looks intentional
+- Swedish copy, real clinic facts from PROJECT_CONTEXT.md
+- No dead code, no unused deps
 
-## Business context
-The sites are built for Swedish local companies and should feel premium, trustworthy, mobile-first, and worth 30,000–150,000 SEK.
+## Do not touch
+- `.env*` except documenting required keys in `.env.example`
+- Unrelated files
+- Package manager / framework unless the milestone requires it

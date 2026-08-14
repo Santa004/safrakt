@@ -1,7 +1,5 @@
 # Mantorps smådjursklinik app
 
-Premium webbapp för Mantorps smådjursklinik.
+Premium kundapp + publik webb för Mantorps Smådjursklinik.
 
-## Status
-
-Projektet är nollställt och redo att byggas från grunden.
+Se `AGENTS.md` och `PROJECT_CONTEXT.md`.
