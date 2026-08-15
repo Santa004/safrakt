@@ -1,7 +1,8 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Fraunces, Inter } from "next/font/google";
 import { SiteFooter } from "@/components/layout/site-footer";
 import { SiteHeader } from "@/components/layout/site-header";
+import { PwaRegister } from "@/components/pwa-register";
 import { clinic } from "@/lib/clinic";
 import "./globals.css";
 
@@ -21,6 +22,15 @@ export const metadata: Metadata = {
   title: clinic.name,
   description:
     "Trygg lokal smådjursklinik i Mantorp. Tandvård, vaccination och hälsokoll.",
+  manifest: "/manifest.webmanifest",
+  appleWebApp: {
+    capable: true,
+    title: clinic.name,
+  },
+};
+
+export const viewport: Viewport = {
+  themeColor: "#1f3d2b",
 };
 
 export default function RootLayout({
@@ -34,6 +44,7 @@ export default function RootLayout({
         <SiteHeader />
         <main className="flex-1">{children}</main>
         <SiteFooter />
+        <PwaRegister />
       </body>
     </html>
   );

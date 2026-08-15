@@ -4,7 +4,10 @@ import { Button } from "@/components/ui/button";
 
 const links = [
   { href: "/", label: "Hem" },
-  { href: "/login", label: "Logga in" },
+  { href: "/tjanster", label: "Tjänster" },
+  { href: "/om", label: "Om" },
+  { href: "/kontakt", label: "Kontakt" },
+  { href: "/boka", label: "Boka" },
 ];
 
 export function SiteHeader() {
@@ -14,7 +17,7 @@ export function SiteHeader() {
         <Link href="/" className="font-serif text-lg text-forest sm:text-xl">
           {clinic.name}
         </Link>
-        <nav className="flex items-center gap-1 sm:gap-3" aria-label="Huvudmeny">
+        <nav className="flex items-center gap-1 sm:gap-2" aria-label="Huvudmeny">
           {links.map((link) => (
             <Link
               key={link.href}
@@ -24,8 +27,11 @@ export function SiteHeader() {
               {link.label}
             </Link>
           ))}
-          <Button href="/signup" variant="primary" className="ml-1 hidden sm:inline-flex">
-            Skapa konto
+          <Button href="/app" variant="secondary" className="ml-1 hidden md:inline-flex">
+            Mina djur
+          </Button>
+          <Button href="/login" variant="primary" className="hidden sm:inline-flex">
+            Logga in
           </Button>
         </nav>
       </div>

@@ -12,4 +12,18 @@ export const clinic = {
   ],
   acuteNote:
     "Akut: ring, reception bedömer. Hänvisa vidare efter stängning / inneliggande.",
+  /** Öppettider för slotgenerator (Europe/Stockholm) */
+  schedule: {
+    /** 0=sön … 6=lör — stängt helg */
+    openDays: {
+      1: { open: "08:15", close: "19:00" },
+      2: { open: "08:15", close: "19:00" },
+      3: { open: "08:15", close: "14:30" },
+      4: { open: "08:15", close: "19:00" },
+      5: { open: "08:15", close: "14:30" },
+    } as Record<number, { open: string; close: string }>,
+    lunch: { start: "12:00", end: "13:00" },
+    slotMinutes: 20,
+    timeZone: "Europe/Stockholm",
+  },
 } as const;
