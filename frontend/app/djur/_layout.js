@@ -18,6 +18,7 @@ export default function DjurLayout() {
       <Stack.Screen name="[id]/boka" options={{ title: 'Be om tid' }} />
       <Stack.Screen name="[id]/logga" options={{ title: 'Logga besök' }} />
       <Stack.Screen name="[id]/redigera" options={{ title: 'Redigera' }} />
+      <Stack.Screen name="[id]/dela" options={{ title: 'Dela djur' }} />
     </Stack>
   );
 }

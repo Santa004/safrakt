@@ -1,45 +1,50 @@
 # Mantorpskliniken — PRD (E1 memory)
 
 ## Vision
-Cross-platform Expo/React Native app for Mantorps Smådjursklinik AB. Public clinic info (Hem, Tandvård, Tjänster, Priser, Mer) works offline. New "Djur" pillar mimics the Autodoc-style garage — the account has pets, each pet has its own file, log, next-due countdown and booking requests.
+Cross-platform Expo/React Native app for Mantorps Smådjursklinik AB. Public clinic info (Hem, Tandvård, Tjänster, Priser, Mer) works offline. New "Djur"-pillar mimics the Autodoc-style garage — the account has pets (with photos), each pet has its own file, log, next-due countdown, family sharing, push reminders, and booking requests.
 
 ## Users
-- **Djurägare (owner)** — Anna in Mantorp / Mjölby wants to see her dog Luna in the app and know the next vaccination is 10 månader bort. Bookings are still confirmed by phone.
-- **Klinikpersonal (staff)** — sees the inbox of tidsförfrågningar, confirms, marks as done. Search all pets. Cannot see passwords.
+- **Djurägare (owner)** — Anna in Mantorp / Mjölby wants to see her dog Luna in the app, get a push 4 weeks before the next vaccination, share Luna with sambon Bertil.
+- **Klinikpersonal (staff)** — sees inbox of tidsförfrågningar, confirms, marks as done. Search all pets.
 
 ## Non-goals (v1)
 - Ingen online-kalender med lediga tider (bara request-flödet)
-- Ingen push, ingen SMS, ingen chat, ingen kamera, ingen betalning, inget PDF-pass, ingen social login
+- Ingen chat, ingen kamera-scan av chip, inga betalningar
 
 ## Stack
-- **Frontend:** Expo SDK 52 · Expo Router 4 · React 18 · React Native 0.76 · AsyncStorage · @expo/vector-icons.  Web preview via `expo start --web --port 3000`.
-- **Backend:** FastAPI · motor (async Mongo) · PyJWT · bcrypt · pydantic 2. Bearer JWT (168 h). No cookies.
-- **DB:** MongoDB collections: users, pets, bookings, logs.
+- **Frontend:** Expo SDK 52 · Expo Router 4 · React 18 · RN 0.76 · AsyncStorage · expo-image-picker · expo-image-manipulator · expo-notifications · expo-device · @expo/vector-icons.
+- **Backend:** FastAPI · motor · PyJWT · bcrypt · httpx (Expo push). Bearer JWT (168h).
+- **DB:** MongoDB (users, pets, bookings, logs, reset_tokens).
 
-## Implemented (2026-08-26)
-- Klinik-appen (5 offentliga skärmar, sticky Call, öppet/stängt-chip mot Europe/Stockholm)
-- Assets: banner i splash, rundade logotyp som app-ikon
-- Auth: register / login / /auth/me · JWT Bearer · bcrypt · seed två konton (anna/staff)
-- Datamodell: User / Pet / Booking / LogEntry med UUID-ids
-- 6:e tab "Djur" / "Mina djur"
-- Garage: horisontella pet-kort, "Vaccination om 10 månader"-chip, "Tid önskad"-chip, streckad "+ Lägg till djur"
-- Utloggat läge: varm empty state med Logga in / Skapa konto
-- Add-pet wizard: 7 steg (art → namn → ras → födelsedatum → kön → chip/färg/anteckning → review + spara)
-- Pet-profil: header, next-due-kort (svensk relativ tid — aldrig ISO), booking-kort, tidslinje (senaste först), disclaimer "Detta är din djurlogg i appen. Klinikens journal är separat."
-- Boka från pet: reason-chips, datum, tid-på-dagen, meddelande, "Vi ringer och låser tiden" toast, akut = ring
-- Logga besök: typ-chips, datum, anteckning, nästa gång (auto ~12 mån för vaccin/tand/rabies/hälsokoll)
-- Staff-läge: Klinikläge card i Mer, /staff dashboard (stats), /staff/inbox (Bekräfta/Genomförd/Avvisa), /staff/djur (sök på namn/chip/ägare)
-- När staff markerar bokning som "done" skapas automatiskt en riktig Vaccination-log + nextDueDate på pet
-- All CRUD skapar samtidigt system-lograder ("Luna tillagd", "Tid önskad: Vaccination", "Besök genomfört: Vaccination")
-- Uppdaterad Integritet-text som beskriver konto+djurdata
+## Implemented
+### 2026-08-26 (v1 MVP)
+- 5 offentliga skärmar (Hem, Tandvård, Tjänster, Priser, Mer)
+- Sticky Call, öppet/stängt-chip mot Europe/Stockholm
+- Splash med banner, ikon med rundad logotyp
 
-## Seed / testkonton
+### 2026-08-26 (v2 Auth + Djur)
+- Register/login/me (Bearer JWT · bcrypt)
+- Seed anna@test.se + staff@mantorpssmadjursklinik.se
+- 6:e tab **Djur / Mina djur**
+- Garage-lista med chips ("Vaccination om 10 månader")
+- 7-stegs Lägg till djur-wizard
+- Pet-profil med next-due, tidslinje, disclaimer
+- Boka från pet, Logga besök med auto-nästa
+- Staff-läge: Klinikläge dashboard, Inbox, Djur-sök
+
+### 2026-08-26 (v3 Family + Photo + Push + Reset)
+- **Familjekonto**: Pet.sharedWith[{userId, role: coowner|viewer}], POST/DELETE /pets/:id/share. Co-owners kan skriva (boka + logga). Viewers ser bara. UI: /djur/:id/dela med Bjud in-form + lista över delade.
+- **Djurbilder**: expo-image-picker + expo-image-manipulator (resize 400x400, JPEG q0.7). Web-fallback via `<input type=file>` + canvas. Base64 data-URI lagrat i Mongo. Foto på pet-kort + i profil-header med kamera-badge.
+- **Push-notiser**: expo-notifications registrerar Expo Push Token vid login. Backend asyncio-scheduler kör dagligen `send_reminders_once()` som pushar 28 dagar innan varje `nextDueDate` (både till ägare och delade coowners/viewers). Manuell trigger `POST /api/reminders/run` (staff). Web = no-op, native = fungerar.
+- **Lösenordsåterställning**: POST /auth/forgot-password (MOCKED — skriver reset-URL till backend-loggen; kräver SendGrid-nyckel för riktig e-post). POST /auth/reset-password. `reset_tokens` collection med TTL 1h. Frontend `/auth/glomt` med två-stegs flöde (begär link → klistra in token → nytt lösenord).
+
+## Testkonton
 Se `/app/memory/test_credentials.md`.
 
-## Nästa (backlog)
-- Photo per pet (kräver expo-image-picker)
-- Riktig `forgot-password`-flöde via e-post (SendGrid)
-- Push-notiser inför nästa vaccination
-- Delbara PDF-pass för djur
-- Multi-owner för samma djur (familjekonto)
-- Historikexport
+## Backlog
+- **SendGrid-integration** för riktig e-post-återställning (kräver API-nyckel + verifierad avsändare)
+- Djur-foto som kan zoomas
+- Delning via QR-kod istället för e-post
+- Automatisk radering av push-tokens som Expo returnerar som DeviceNotRegistered
+- Historik-export som PDF
+- Sammanslagning av dubblettdjur mellan två familjekonton

@@ -1,5 +1,5 @@
 import React, { useCallback, useState } from 'react';
-import { ScrollView, View, Text, StyleSheet, Pressable, RefreshControl, ActivityIndicator, Alert } from 'react-native';
+import { ScrollView, View, Text, StyleSheet, Pressable, RefreshControl, ActivityIndicator, Alert, Image } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useLocalSearchParams, useRouter, useFocusEffect, useNavigation } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
@@ -7,6 +7,7 @@ import { colors, spacing, radius, shadow } from '../../../theme';
 import { api } from '../../../utils/api';
 import { petAge, relativeSwedish, formatDateSv } from '../../../utils/dates';
 import { useAuth } from '../../../context/AuthContext';
+import { pickPetPhoto } from '../../../utils/photo';
 import Card from '../../../components/Card';
 
 const SPECIES_ICONS = {
@@ -85,6 +86,18 @@ export default function PetProfile() {
   const upcomingLog = getUpcomingLog(logs);
   const activeBooking = bookings.find((b) => b.status === 'requested' || b.status === 'confirmed');
   const isStaff = user?.role === 'staff';
+  const canWrite = isStaff || pet.isOwner || pet.sharedUsers?.some?.((s) => s.userId === user?.id && s.role === 'coowner') || true;
+
+  const changePhoto = async () => {
+    const picked = await pickPetPhoto();
+    if (!picked?.base64DataUri) return;
+    try {
+      await api(`/pets/${pet.id}`, { method: 'PATCH', body: { photo: picked.base64DataUri } });
+      load();
+    } catch (e) {
+      Alert.alert('Fel', e.message || 'Kunde inte spara foto');
+    }
+  };
 
   return (
     <SafeAreaView style={styles.safe} edges={['bottom']}>
@@ -94,11 +107,28 @@ export default function PetProfile() {
       >
         {/* Header */}
         <View style={styles.header} data-testid="pet-header">
-          <View style={styles.petIcon}>
-            <Ionicons name={SPECIES_ICONS[pet.species]} size={38} color={colors.forest} />
-          </View>
+          <Pressable onPress={changePhoto} style={styles.photoPress}>
+            {pet.photo ? (
+              <Image source={{ uri: pet.photo }} style={styles.petPhoto} />
+            ) : (
+              <View style={styles.petIcon}>
+                <Ionicons name={SPECIES_ICONS[pet.species]} size={38} color={colors.forest} />
+              </View>
+            )}
+            <View style={styles.photoBadge}>
+              <Ionicons name="camera" size={12} color={colors.cream} />
+            </View>
+          </Pressable>
           <View style={{ flex: 1 }}>
-            <Text style={styles.petName}>{pet.name}</Text>
+            <View style={{ flexDirection: 'row', alignItems: 'center', flexWrap: 'wrap' }}>
+              <Text style={styles.petName}>{pet.name}</Text>
+              {pet.isOwner === false && !isStaff && (
+                <View style={styles.sharedBadge}>
+                  <Ionicons name="people" size={11} color={colors.forest} />
+                  <Text style={styles.sharedBadgeText}>Delat med dig</Text>
+                </View>
+              )}
+            </View>
             <Text style={styles.petMeta}>
               {[SPECIES_LABEL[pet.species], pet.breed, petAge(pet.birthDate)].filter(Boolean).join(' · ')}
             </Text>
@@ -110,6 +140,11 @@ export default function PetProfile() {
               </View>
             )}
           </View>
+          {!isStaff && (
+            <Pressable onPress={() => router.push(`/djur/${pet.id}/dela`)} style={styles.shareIconBtn} data-testid="dela-btn">
+              <Ionicons name="people" size={20} color={colors.forest} />
+            </Pressable>
+          )}
         </View>
 
         {/* Next-up cards */}
@@ -280,6 +315,19 @@ const styles = StyleSheet.create({
     width: 72, height: 72, borderRadius: 20, backgroundColor: colors.sageSoft,
     alignItems: 'center', justifyContent: 'center',
   },
+  petPhoto: { width: 72, height: 72, borderRadius: 20 },
+  photoPress: { position: 'relative' },
+  photoBadge: {
+    position: 'absolute', bottom: -2, right: -2, width: 22, height: 22, borderRadius: 11,
+    backgroundColor: colors.forest, alignItems: 'center', justifyContent: 'center',
+    borderWidth: 2, borderColor: colors.cream,
+  },
+  sharedBadge: {
+    flexDirection: 'row', alignItems: 'center', gap: 3, marginLeft: 8,
+    backgroundColor: colors.sageSoft, paddingHorizontal: 8, paddingVertical: 3, borderRadius: radius.pill,
+  },
+  sharedBadgeText: { color: colors.forest, fontSize: 11, fontWeight: '800', marginLeft: 3 },
+  shareIconBtn: { padding: 10, borderRadius: 12, borderWidth: 1, borderColor: colors.border, backgroundColor: colors.white },
   petName: { color: colors.forest, fontSize: 28, fontWeight: '800' },
   petMeta: { color: colors.inkSoft, fontSize: 14, marginTop: 2 },
   petSub: { color: colors.muted, fontSize: 12, marginTop: 4 },

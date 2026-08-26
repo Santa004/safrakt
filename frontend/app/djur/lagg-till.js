@@ -1,10 +1,11 @@
 import React, { useState } from 'react';
-import { ScrollView, View, Text, TextInput, Pressable, StyleSheet, Platform } from 'react-native';
+import { ScrollView, View, Text, TextInput, Pressable, StyleSheet, Platform, Image } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { colors, spacing, radius, shadow } from '../../theme';
 import { api } from '../../utils/api';
+import { pickPetPhoto } from '../../utils/photo';
 
 const SPECIES = [
   { id: 'hund', label: 'Hund', icon: 'paw' },
@@ -142,6 +143,24 @@ export default function LaggTill() {
         {step === 6 && (
           <View>
             <Text style={styles.q}>Se över och spara</Text>
+
+            <Pressable
+              onPress={async () => { const p = await pickPetPhoto(); if (p) set('photo', p.base64DataUri); }}
+              style={({ pressed }) => [styles.photoRow, pressed && { opacity: 0.9 }]}>
+              {pet.photo ? (
+                <Image source={{ uri: pet.photo }} style={styles.photoLarge} />
+              ) : (
+                <View style={styles.photoPlaceholder}>
+                  <Ionicons name="camera-outline" size={28} color={colors.forest} />
+                </View>
+              )}
+              <View style={{ flex: 1, marginLeft: 12 }}>
+                <Text style={styles.photoTitle}>{pet.photo ? 'Byt foto' : 'Lägg till foto (frivilligt)'}</Text>
+                <Text style={styles.photoHint}>Bilden syns i garaget och på profilen.</Text>
+              </View>
+              <Ionicons name="chevron-forward" size={18} color={colors.muted} />
+            </Pressable>
+
             <View style={styles.review}>
               <ReviewRow label="Art" value={SPECIES.find((s) => s.id === pet.species)?.label} />
               <ReviewRow label="Namn" value={pet.name} />
@@ -246,4 +265,15 @@ const styles = StyleSheet.create({
   next: { flexDirection: 'row', alignItems: 'center', backgroundColor: colors.forest, paddingHorizontal: 20, paddingVertical: 14, borderRadius: radius.pill, gap: 6, ...shadow.strong },
   nextText: { color: colors.cream, fontWeight: '800' },
   error: { color: colors.danger, marginTop: 8 },
+  photoRow: {
+    flexDirection: 'row', alignItems: 'center', padding: 12, marginBottom: 12,
+    backgroundColor: colors.white, borderRadius: radius.lg, borderWidth: 1, borderColor: colors.border, ...shadow.card,
+  },
+  photoLarge: { width: 60, height: 60, borderRadius: 16 },
+  photoPlaceholder: {
+    width: 60, height: 60, borderRadius: 16, backgroundColor: colors.sageSoft,
+    alignItems: 'center', justifyContent: 'center',
+  },
+  photoTitle: { color: colors.forest, fontWeight: '800' },
+  photoHint: { color: colors.inkSoft, fontSize: 12, marginTop: 2 },
 });

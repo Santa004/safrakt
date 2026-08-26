@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useState } from 'react';
-import { ScrollView, View, Text, StyleSheet, Pressable, RefreshControl, ActivityIndicator } from 'react-native';
+import { ScrollView, View, Text, StyleSheet, Pressable, RefreshControl, ActivityIndicator, Image } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter, useFocusEffect } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
@@ -119,13 +119,23 @@ function PetCard({ pet, upcoming, booking, onPress }) {
       style={({ pressed }) => [styles.petCard, pressed && { transform: [{ scale: 0.99 }] }]}
       data-testid={`pet-card-${pet.id}`}
     >
-      <View style={styles.petIcon}>
-        <Ionicons name={SPECIES_ICONS[pet.species] || 'paw'} size={26} color={colors.forest} />
-      </View>
+      {pet.photo ? (
+        <Image source={{ uri: pet.photo }} style={styles.petPhoto} />
+      ) : (
+        <View style={styles.petIcon}>
+          <Ionicons name={SPECIES_ICONS[pet.species] || 'paw'} size={26} color={colors.forest} />
+        </View>
+      )}
       <View style={{ flex: 1 }}>
         <View style={{ flexDirection: 'row', alignItems: 'baseline' }}>
           <Text style={styles.petName}>{pet.name}</Text>
           <Text style={styles.petMeta}> · {SPECIES_LABEL[pet.species]}</Text>
+          {pet.isOwner === false && (
+            <View style={styles.sharedBadge}>
+              <Ionicons name="people" size={10} color={colors.forest} />
+              <Text style={styles.sharedBadgeText}>Delat</Text>
+            </View>
+          )}
         </View>
         <Text style={styles.petSub}>
           {[pet.breed, petAge(pet.birthDate)].filter(Boolean).join(' · ')}
@@ -213,6 +223,14 @@ const styles = StyleSheet.create({
     width: 52, height: 52, borderRadius: 16, backgroundColor: colors.sageSoft,
     alignItems: 'center', justifyContent: 'center',
   },
+  petPhoto: {
+    width: 52, height: 52, borderRadius: 16,
+  },
+  sharedBadge: {
+    flexDirection: 'row', alignItems: 'center', gap: 3, marginLeft: 8,
+    backgroundColor: colors.sageSoft, paddingHorizontal: 6, paddingVertical: 2, borderRadius: radius.pill,
+  },
+  sharedBadgeText: { color: colors.forest, fontSize: 10, fontWeight: '800', marginLeft: 3 },
   petName: { fontSize: 18, fontWeight: '800', color: colors.forest },
   petMeta: { color: colors.inkSoft, fontSize: 13 },
   petSub: { color: colors.inkSoft, fontSize: 12, marginTop: 2 },
